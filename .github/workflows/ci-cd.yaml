@@ -106,7 +106,7 @@ jobs:
       # ------------------------------------------------------------
       - name: Configure kubeconfig
         run: |
-          printf '%s' "${{ secrets.KUBECONFIG_CONTENT }}" > kubeconfig
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" | base64 -d > kubeconfig
           chmod 600 kubeconfig
           echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
 
