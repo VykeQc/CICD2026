@@ -106,8 +106,9 @@ jobs:
       # ------------------------------------------------------------
       - name: Configure kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG_CONTENT }}" | base64 -d > kubeconfig
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" > kubeconfig
           chmod 600 kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
           echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
 
       # ------------------------------------------------------------
@@ -119,7 +120,7 @@ jobs:
       # ------------------------------------------------------------
       - name: Update image in manifest
         run: |
-          sed -i "s|DOCKER_HUB_USERNAME/hello-app:${{ steps.vars.outputs.TAG }}|${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}|g" k8s/deployment-${{ steps.vars.outputs.K8S_ENV }}.yaml
+          sed -i "s|DOCKER_HUB_USERNAME/hello-app:${{ steps.vars.outputs.TAG }}|${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}|g" k8s/deployment.yaml
 
       # ------------------------------------------------------------
       # Étape 9 : Déployer dans Kubernetes
@@ -127,4 +128,4 @@ jobs:
       # ------------------------------------------------------------
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f k8s/deployment-${{ steps.vars.outputs.K8S_ENV }}.yaml -n ${{ steps.vars.outputs.K8S_ENV }}
+          kubectl apply -f k8s/deployment.yaml -n ${{ steps.vars.outputs.K8S_ENV }}
